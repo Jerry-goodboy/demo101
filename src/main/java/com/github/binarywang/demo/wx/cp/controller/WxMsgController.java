@@ -3,6 +3,7 @@ package com.github.binarywang.demo.wx.cp.controller;
 import com.github.binarywang.demo.wx.cp.config.WxCpConfiguration;
 import com.github.binarywang.demo.wx.cp.utils.JsonUtils;
 import me.chanjar.weixin.cp.api.WxCpService;
+import me.chanjar.weixin.cp.bean.WxCpMessage;
 import me.chanjar.weixin.cp.bean.WxCpXmlMessage;
 import me.chanjar.weixin.cp.bean.WxCpXmlOutMessage;
 import me.chanjar.weixin.cp.util.crypto.WxCpCryptUtil;
@@ -25,8 +26,23 @@ public class WxMsgController {
 
     final WxCpService wxCpService = WxCpConfiguration.getCpService(agentId);
 
+      WxCpMessage message = WxCpMessage
+          .TEXT()
+          .agentId(agentId) // 企业号应用ID
+          .toUser("@all") //非必填，UserID列表（消息接收者，多个接收者用‘|’分隔）。特殊情况：指定为@all，则向关注该企业应用的全部成员发送
+          .toParty("") //非必填，PartyID列表，多个接受者用‘|’分隔。当touser为@all时忽略本参数
+          .toTag("") //非必填，TagID列表，多个接受者用‘|’分隔。当touser为@all时忽略本参数
+          .content(requestBody)
+          .build();
 
-    return out;
+      try {
+          // 设置消息的内容等信息
+          wxCpService.messageSend(message);
+      }catch (Exception e) {
+          e.printStackTrace();
+      }
+
+    return "success";
   }
 
 
